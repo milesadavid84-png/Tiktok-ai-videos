@@ -1,0 +1,36 @@
+
+name: Render TikTok Video
+
+on:
+workflow_dispatch:
+inputs:
+job_id:
+description: "Identifiant de la vidéo"
+required: true
+type: string
+clip_url:
+description: "URL de la vidéo nature"
+required: true
+type: string
+
+permissions:
+contents: write
+
+jobs:
+render:
+runs-on: ubuntu-latest
+steps:
+- name: Download repository
+uses: actions/checkout@v4
+
+- name: Install FFmpeg
+run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+- name: Download nature video
+env:
+CLIP_URL: ${{ inputs.clip_url }}
+run: |
+curl -fL "$CLIP_URL" -o nature.mp4
+
+- name: Check video
+run: ffprobe -v error nature.mp4
